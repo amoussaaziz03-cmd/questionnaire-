@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEBDO SANTE - Évaluation</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* Vert santé */
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+
+        h1 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.8rem; }
+        .subtitle { font-size: 1rem; color: #666; margin-bottom: 5px; }
+        .note { font-size: 0.9rem; color: #888; font-style: italic; }
+
+        .section-preliminaire {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .question-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .question-desc {
+            font-size: 0.95rem;
+            color: #555;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .radio-option:hover { background-color: #f0f0f0; border-color: #bbb; }
+        .radio-option input { margin-right: 10px; transform: scale(1.2); }
+
+        .scale-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            gap: 5px;
+        }
+
+        .scale-btn {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            background: white;
+        }
+
+        .scale-btn:hover { background-color: #f9f9f9; border-color: #999; }
+        .scale-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 8px;
+            padding: 0 5px;
+        }
+
+        .slider-container {
+            margin: 20px 0;
+            padding: 10px;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+        
+        .slider {
+            width: 100%;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-align: center;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: vertical;
+            font-family: inherit;
+            min-height: 100px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(46, 125, 50, 0.2);
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+            margin-top: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover { background-color: #1b5e20; transform: translateY(-2px); }
+        .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+
+        .hidden { display: none; }
+        #formFeedback { 
+            text-align: center; 
+            color: green; 
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: none; 
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+        #bug-details {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .scale-btn { padding: 10px 2px; font-size: 0.9rem; }
+            h1 { font-size: 1.5rem; }
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>HEBDO SANTE </h1>
+        <p class="subtitle">Questionnaire d'évaluation de la plateforme</p>
+        <p class="note">Durée estimée : 5 à 7 minutes. Vos réponses sont anonymes.</p>
+    </header>
+        <!-- SECTION CONSENTEMENT ET CONFIDENTIALITÉ -->
+        <div style="background-color: #e3f2fd; border-left: 5px solid #1976d2; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
+            <h3 style="margin-top:0; color:#1565c0; font-size:1.2rem;">📋 Information et Consentement</h3>
+            <p style="font-size:0.95rem; line-height:1.6; color:#333; margin-bottom:15px;">
+                <strong>Objectif de l'étude :</strong> Ce questionnaire vise à évaluer la plateforme <em>HEBDO SANTE USENGHOR</em> afin de l'améliorer avant son déploiement officiel auprès des étudiants de l'Université Senghor.
+            </p>
+            <p style="font-size:0.95rem; line-height:1.6; color:#333; margin-bottom:15px;">
+                <strong>Votre confidentialité :</strong> Vos réponses sont <strong>totalement anonymes et confidentielles</strong>. Aucune donnée personnelle (nom, email, etc.) n'est collectée. Les données seront utilisées uniquement à des fins d'analyse et d'amélioration du service.
+            </p>
+            <p style="font-size:0.95rem; line-height:1.6; color:#333; margin-bottom:15px;">
+                <strong>Consentement :</strong> En remplissant et en soumettant ce formulaire, vous déclarez avoir lu et compris ces informations, et vous <strong>acceptez librement</strong> de participer à cette étude.
+            </p>
+            <div style="margin-top:15px;">
+                <label style="display:flex; align-items:flex-start; cursor:pointer; font-weight:600; color:#1565c0;">
+                    <input type="checkbox" id="consentement" style="margin-right:10px; transform:scale(1.3);">
+                    <span>J'ai lu les informations ci-dessus et je donne mon consentement pour participer à cette étude.</span>
+                </label>
+                <div id="consent-error" style="color:#d32f2f; font-size:0.9rem; margin-top:5px; display:none;">
+                    ⚠️ Vous devez accepter le consentement pour continuer.
+                </div>
+            </div>
+        </div>
+    <form id="surveyForm">
+        
+        <!-- SECTION PRELIMINAIRE -->
+        <div class="section-preliminaire">
+            <h3 style="margin-top:0; color:var(--primary-color);">SECTION PRÉLIMINAIRE — PROFIL DU TESTEUR</h3>
+            
+            <div class="question-block" style="border:none; margin-bottom:15px;">
+                <label class="question-title">Appareil principalement utilisé pour tester :</label>
+                <div class="options-group">
+                    <label class="radio-option"><input type="radio" name="device" value="Smartphone" required> Smartphone</label>
+                    <label class="radio-option"><input type="radio" name="device" value="Tablette"> Tablette</label>
+                    <label class="radio-option"><input type="radio" name="device" value="Ordinateur"> Ordinateur</label>
+                </div>
+            </div>
+
+            <div class="question-block" style="border:none;">
+                <label class="question-title">Statut :</label>
+                <div class="options-group">
+                    <label class="radio-option"><input type="radio" name="status" value="Etudiant Senghor" required> Étudiant(e) Senghor</label>
+                    <label class="radio-option"><input type="radio" name="status" value="Personnel/Enseignant"> Personnel/Enseignant</label>
+                    <label class="radio-option"><input type="radio" name="status" value="Autre"> Autre</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUESTIONS D'EVALUATION -->
+        
+                <!-- SECTION HABITUDES ACTUELLES -->
+        <div class="question-block" style="border-bottom: 2px dashed #ddd; margin-top: 30px;">
+            <h3 style="color:var(--primary-color); margin-bottom:15px;">🍎 Vos habitudes actuelles</h3>
+            
+            <div class="question-block" style="border:none; margin-bottom:15px;">
+                <span class="question-title">Question 0 : Quels outils utilisez-vous actuellement pour gérer votre nutrition ?</span>
+                <span class="question-desc">(Cochez toutes les réponses qui correspondent)</span>
+                <div class="options-group" style="flex-direction:column; gap:8px;">
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="checkbox" name="tools_used" value="Application (MyFitnessPal, Yuka, etc.)" style="transform:scale(1.3); margin-right:12px;"> 
+                        Applications mobiles (MyFitnessPal, Yuka, etc.)
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="checkbox" name="tools_used" value="Régime personnel / Comptage manuel" style="transform:scale(1.3); margin-right:12px;"> 
+                        Régime personnel / Comptage manuel
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="checkbox" name="tools_used" value="Conseils nutritionniste / Médecin" style="transform:scale(1.3); margin-right:12px;"> 
+                        Suivi par un professionnel (nutritionniste, médecin)
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="checkbox" name="tools_used" value="Aucun / Je mange au feeling" style="transform:scale(1.3); margin-right:12px;"> 
+                        Aucun / Je mange au feeling
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="checkbox" name="tools_used" value="Recettes de famille / Tradition" style="transform:scale(1.3); margin-right:12px;"> 
+                        Recettes de famille / Tradition
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="question-block">
+            <span class="question-title">Question 1</span>
+            <span class="question-desc">Comment évaluez-vous la facilité de l'inscription et de la création de votre profil sur la plateforme ?</span>
+            <div class="scale-options" data-question="q1">
+                <div class="scale-btn" onclick="selectScale(this, 1)">1</div>
+                <div class="scale-btn" onclick="selectScale(this, 2)">2</div>
+                <div class="scale-btn" onclick="selectScale(this, 3)">3</div>
+                <div class="scale-btn" onclick="selectScale(this, 4)">4</div>
+                <div class="scale-btn" onclick="selectScale(this, 5)">5</div>
+            </div>
+            <div class="scale-labels">
+                <span>T. Difficile</span>
+                <span>T. Facile</span>
+            </div>
+            <input type="hidden" name="q1" id="q1" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 2</span>
+            <span class="question-desc">L'affichage et la navigation sur mobile vous ont-ils semblés fluides et stables (pas de saut ou de blocage de l'écran) ?</span>
+            <div class="scale-options" data-question="q2">
+                <div class="scale-btn" onclick="selectScale(this, 1)">1</div>
+                <div class="scale-btn" onclick="selectScale(this, 2)">2</div>
+                <div class="scale-btn" onclick="selectScale(this, 3)">3</div>
+                <div class="scale-btn" onclick="selectScale(this, 4)">4</div>
+                <div class="scale-btn" onclick="selectScale(this, 5)">5</div>
+            </div>
+            <input type="hidden" name="q2" id="q2" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 3</span>
+            <span class="question-desc">Le menu de navigation (icône en haut à gauche) vous a-t-il permis de retrouver facilement les différentes sections de la plateforme ?</span>
+            <div class="scale-options" data-question="q3">
+                <div class="scale-btn" onclick="selectScale(this, 1)">1</div>
+                <div class="scale-btn" onclick="selectScale(this, 2)">2</div>
+                <div class="scale-btn" onclick="selectScale(this, 3)">3</div>
+                <div class="scale-btn" onclick="selectScale(this, 4)">4</div>
+                <div class="scale-btn" onclick="selectScale(this, 5)">5</div>
+            </div>
+            <input type="hidden" name="q3" id="q3" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 4</span>
+            <span class="question-desc">Comment jugez-vous la clarté des informations affichées sur votre tableau de bord (IMC, besoins caloriques, plan alimentaire) ?</span>
+            <div class="scale-options" data-question="q4">
+                <div class="scale-btn" onclick="selectScale(this, 1)">1</div>
+                <div class="scale-btn" onclick="selectScale(this, 2)">2</div>
+                <div class="scale-btn" onclick="selectScale(this, 3)">3</div>
+                <div class="scale-btn" onclick="selectScale(this, 4)">4</div>
+                <div class="scale-btn" onclick="selectScale(this, 5)">5</div>
+            </div>
+            <input type="hidden" name="q4" id="q4" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 5</span>
+            <span class="question-desc">Si vous avez utilisé le scanner de repas, l'estimation des calories et nutriments vous a-t-elle semblé cohérente avec votre repas réel ?<br><em style="color:#d32f2f;">Cochez 3 (au milieu) si vous n'avez pas testé cette fonctionnalité.</em></span>
+            <div class="scale-options" data-question="q5">
+                <div class="scale-btn" onclick="selectScale(this, 1)">1</div>
+                <div class="scale-btn" onclick="selectScale(this, 2)">2</div>
+                <div class="scale-btn" onclick="selectScale(this, 3)">3 (Non testé)</div>
+                <div class="scale-btn" onclick="selectScale(this, 4)">4</div>
+                <div class="scale-btn" onclick="selectScale(this, 5)">5</div>
+            </div>
+            <input type="hidden" name="q5" id="q5" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 6</span>
+            <span class="question-desc">Les rubriques de contenu (Gastronomie, Science, Prophylaxie alimentaire, Question du département) vous ont-elles appris quelque chose d'utile ?</span>
+            <div class="scale-options" data-question="q6">
+                <div class="scale-btn" onclick="selectScale(this, 1)">1</div>
+                <div class="scale-btn" onclick="selectScale(this, 2)">2</div>
+                <div class="scale-btn" onclick="selectScale(this, 3)">3</div>
+                <div class="scale-btn" onclick="selectScale(this, 4)">4</div>
+                <div class="scale-btn" onclick="selectScale(this, 5)">5</div>
+            </div>
+            <input type="hidden" name="q6" id="q6" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 7</span>
+            <span class="question-desc">Avez-vous rencontré un bug ou un dysfonctionnement technique pendant votre utilisation ?</span>
+            <div class="options-group">
+                <label class="radio-option"><input type="radio" name="q7" value="Non" required onclick="toggleBugDetails(false)"> Non</label>
+                <label class="radio-option"><input type="radio" name="q7" value="Oui" onclick="toggleBugDetails(true)"> Oui</label>
+            </div>
+            <div id="bug-details" class="hidden">
+                <label for="q7_desc" style="font-weight:600; display:block; margin-bottom:5px;">Si oui, décrivez brièvement (quelle page, quelle action) :</label>
+                <textarea id="q7_desc" name="q7_desc" placeholder="Ex: Page d'accueil, blocage au clic sur 'Scanner'..."></textarea>
+            </div>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 8</span>
+            <span class="question-desc">Sur une échelle de 0 à 10, quelle est la probabilité que vous recommandiez cette plateforme à un(e) camarade ?</span>
+            <div class="slider-container">
+                <input type="range" class="slider" min="0" max="10" value="5" id="npsSlider" oninput="updateNPSDisplay(this.value)" step="1">
+                <span class="slider-value" id="npsValue">5</span>
+                <div class="scale-labels">
+                    <span>0 (Pas du tout probable)</span>
+                    <span>10 (Très probable)</span>
+                </div>
+            </div>
+            <input type="hidden" name="q8" id="q8" required>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 9</span>
+            <span class="question-desc">Quelle fonctionnalité avez-vous trouvée la plus utile ou la plus intéressante, et pourquoi ?</span>
+            <textarea name="q9" required placeholder="Votre réponse..."></textarea>
+        </div>
+
+        <div class="question-block">
+            <span class="question-title">Question 10</span>
+            <span class="question-desc">Quelle amélioration prioritaire suggérez-vous pour la prochaine version de la plateforme ?</span>
+            <textarea name="q10" required placeholder="Votre suggestion..."></textarea>
+        </div>
+        
+        <!-- SECTION MODELE ECONOMIQUE -->
+        <div class="question-block" style="border-bottom: 2px dashed #ddd; margin-top: 30px;">
+            <h3 style="color:var(--primary-color); margin-bottom:15px;">💰 Votre avis sur le modèle</h3>
+            
+            <div class="question-block" style="border:none; margin-bottom:15px;">
+                <span class="question-title">Question 11 : Seriez-vous prêt à payer pour utiliser une plateforme de nutrition complète (scanner, plans, suivi) ?</span>
+                <div class="options-group">
+                    <label class="radio-option"><input type="radio" name="willing_to_pay" value="Oui, absolument" required> Oui, absolument</label>
+                    <label class="radio-option"><input type="radio" name="willing_to_pay" value="Peut-être, selon le prix"> Peut-être, selon le prix</label>
+                    <label class="radio-option"><input type="radio" name="willing_to_pay" value="Non, je préfère le gratuit"> Non, je préfère le gratuit</label>
+                </div>
+            </div>
+
+            <div class="question-block" style="border:none;">
+                <span class="question-title">Question 12 : Quel budget mensuel seriez-vous prêt à investir pour un tel service ?</span>
+                <div class="options-group" style="flex-direction:column; gap:8px;">
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="radio" name="budget" value="Gratuit uniquement" style="transform:scale(1.3); margin-right:12px;"> 
+                        Gratuit uniquement (même avec publicités)
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="radio" name="budget" value="Moins de 500 FCFA / 1€" style="transform:scale(1.3); margin-right:12px;"> 
+                        Moins de 500 FCFA (env. 1€) / mois
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="radio" name="budget" value="500 - 1000 FCFA / 1-2€" style="transform:scale(1.3); margin-right:12px;"> 
+                        500 - 1000 FCFA (1-2€) / mois
+                    </label>
+                    <label class="radio-option" style="width:100%; justify-content:flex-start;">
+                        <input type="radio" name="budget" value="Plus de 1000 FCFA / 2€" style="transform:scale(1.3); margin-right:12px;"> 
+                        Plus de 1000 FCFA (>2€) / mois
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="submit-btn">Envoyer mon avis</button>
+        <div id="formFeedback"></div>
+    </form>
+</div>
+
+<script>
+    // --- CONFIGURATION ---
+    // REMPLACEZ CETTE URL PAR VOTRE PROPRE LIEN GOOGLE SCRIPT
+    // Exemple: 'https://script.google.com/macros/s/AKfycbx.../exec'
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_yh-nj949KrHK6_UJo4chW4mjrk0HCCQPUexLDsiTimkYWu7CUMG1b8NyRxZLnkOJ/exec';
+    const KEY_NAME = 'senghor_survey_submitted'; // Clé pour stocker la réponse
+    // ---------------------
+
+    // Vérifier si l'utilisateur a déjà répondu au chargement de la page
+    window.addEventListener('DOMContentLoaded', function() {
+        if (localStorage.getItem(KEY_NAME) === 'true') {
+            // Si déjà répondu, rediriger immédiatement vers la page de remerciement
+            window.location.href = 'merci.html';
+        }
+    });
+
+    // Fonctions utilitaires
+    function selectScale(element, value) {
+        const container = element.parentElement;
+        const allButtons = container.querySelectorAll('.scale-btn');
+        allButtons.forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+        const questionName = container.getAttribute('data-question');
+        document.getElementById(questionName).value = value;
+    }
+
+    function updateNPSDisplay(val) {
+        document.getElementById('npsValue').innerText = val;
+        document.getElementById('q8').value = val;
+    }
+
+    function toggleBugDetails(show) {
+        const detailsDiv = document.getElementById('bug-details');
+        if (show) {
+            detailsDiv.classList.remove('hidden');
+        } else {
+            detailsDiv.classList.add('hidden');
+            document.getElementById('q7_desc').value = '';
+        }
+    }
+
+    // Logique de soumission
+        document.getElementById('surveyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // 1. Vérifier le consentement
+        const consentement = document.getElementById('consentement').checked;
+        if (!consentement) {
+            const errorMsg = document.getElementById('consent-error');
+            errorMsg.style.display = 'block';
+            // Petit effet de secousse pour attirer l'attention
+            const container = document.querySelector('.section-preliminaire');
+            container.style.animation = 'shake 0.5s';
+            setTimeout(() => container.style.animation = '', 500);
+            return; // Arrête la soumission ici
+        } else {
+            // Cacher l'erreur si elle était affichée
+            document.getElementById('consent-error').style.display = 'none';
+        }
+        if (GOOGLE_SCRIPT_URL.includes('TON_ID')) {
+            alert("ATTENTION : URL Google Script non configurée !");
+            return;
+        }
+
+        const btn = document.querySelector('.submit-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "Envoi en cours...";
+        btn.disabled = true;
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            // 1. Marquer l'utilisateur comme ayant répondu (stockage local)
+            localStorage.setItem(KEY_NAME, 'true');
+            
+            // 2. Rediriger vers la page de remerciement
+            // On utilise un petit délai pour être sûr que tout soit bien envoyé
+            setTimeout(() => {
+                window.location.href = 'merci.html';
+            }, 500);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            const feedback = document.getElementById('formFeedback');
+            feedback.style.display = 'block';
+            feedback.style.color = '#d32f2f';
+            feedback.innerHTML = `
+                <h3 style="color:#d32f2f;">⚠️ Erreur d'envoi</h3>
+                <p>Veuillez vérifier votre connexion et réessayer.</p>
+            `;
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    });
+</script>
